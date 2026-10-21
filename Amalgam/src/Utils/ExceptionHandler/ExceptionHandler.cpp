@@ -272,7 +272,7 @@ void CExceptionHandler::Unload()
 
 	if (s_pFunctionTable)
 	{
-		RtlRemoveFunctionTable(s_pFunctionTable, s_nFunctionTableEntries, s_uImageBase);
+		//RtlRemoveFunctionTable(s_pFunctionTable, s_nFunctionTableEntries, s_uImageBase);
 		s_pFunctionTable = nullptr;
 		s_nFunctionTableEntries = 0;
 	}
