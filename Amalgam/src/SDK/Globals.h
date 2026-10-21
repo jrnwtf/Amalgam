@@ -183,6 +183,14 @@ namespace G
 	inline WeaponAmmoInfo_t AmmoInSlot[SLOT_SECONDARY + 1] = { WeaponAmmoInfo_t(), WeaponAmmoInfo_t() };
 	inline bool HasWeaponForSlot[SLOT_MELEE + 1] = { false, false, false };
 
+	inline Vec3 RealViewAngles = {};
+	inline Vec3 FakePOVOffset = {};
+	inline bool FakePOVActive = false;
+
+	inline bool FlipWorldActive = false;
+
+	inline std::string m_UserName = "User";
+
 	inline int& RandomSeed()
 	{
 		static auto& pRandomSeed = *reinterpret_cast<int*>(U::Memory.RelToAbs(S::RandomSeed()));
