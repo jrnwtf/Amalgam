@@ -33,6 +33,8 @@ public:
 
 	void Unload();
 
+	int GetTickbase(CUserCmd* pCmd, CBasePlayer* pLocal);
+
 	void AdjustPlayers(CBaseEntity* pLocal);
 	void RestorePlayers();
 

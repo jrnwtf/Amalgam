@@ -3,6 +3,24 @@
 #include "../Ticks/Ticks.h"
 #include "../Simulation/MovementSimulation/MovementSimulation.h"
 
+int CEnginePrediction::GetTickbase(CUserCmd* pCmd, CBasePlayer* pLocal)
+{
+	static int nTick = 0;
+	static CUserCmd* pLastCmd = nullptr;
+
+	if (pCmd)
+	{
+		if (!pLastCmd || pLastCmd->hasbeenpredicted)
+			nTick = pLocal->m_nTickBase();
+
+		else nTick++;
+
+		pLastCmd = pCmd;
+	}
+
+	return nTick;
+}
+
 // account for interp and origin compression when simulating local player
 void CEnginePrediction::AdjustPlayers(CBaseEntity* pLocal)
 {
@@ -46,6 +64,7 @@ void CEnginePrediction::Simulate(CTFPlayer* pLocal, CUserCmd* pCmd)
 	I::Prediction->SetLocalViewAngles(pCmd->viewangles);
 
 	AdjustPlayers(pLocal);
+	I::Prediction->RunCommand(pLocal, pCmd, I::MoveHelper);
 	I::Prediction->SetupMove(pLocal, pCmd, I::MoveHelper, &m_tMoveData);
 	I::GameMovement->ProcessMovement(pLocal, &m_tMoveData);
 	I::Prediction->FinishMove(pLocal, pCmd, &m_tMoveData);
