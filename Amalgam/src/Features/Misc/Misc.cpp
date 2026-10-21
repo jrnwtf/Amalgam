@@ -3326,3 +3326,64 @@ void CMisc::OnChatMessage(int iEntIndex, const std::string& sName, const std::st
 	}
 
 }
+
+void CMisc::StrafeOptimizer(CTFPlayer* pLocal, CUserCmd* pCmd)
+{
+	if (!Vars::Misc::Movement::StrafeOptimizer.Value || !pLocal || !pLocal->IsAlive())
+		return;
+
+	if (Vars::Misc::Movement::AutoStrafe.Value)
+		return;
+
+	const int iMoveType = pLocal->m_MoveType();
+	if (iMoveType == MOVETYPE_LADDER || iMoveType == MOVETYPE_NOCLIP || iMoveType == MOVETYPE_OBSERVER)
+		return;
+
+	static float flPrevYaw = pCmd->viewangles.y;
+
+	const Vec3 vVelocity = pLocal->m_vecVelocity();
+	const bool bAirborne = !(pLocal->m_fFlags() & FL_ONGROUND);
+
+	if (pCmd->forwardmove == 0.f && bAirborne
+		&& vVelocity.Length2D() > float(Vars::Misc::Movement::StrafeOptimizerMinSpeed.Value))
+	{
+		static auto m_yaw = H::ConVars.FindVar("m_yaw");
+		static auto sensitivity = H::ConVars.FindVar("sensitivity");
+		const float flYawFactor = m_yaw ? m_yaw->GetFloat() : 0.022f;
+		const float flSens = sensitivity ? sensitivity->GetFloat() : 1.f;
+		const float flYawStep = flSens * flYawFactor;
+		const float flGain = Vars::Misc::Movement::StrafeOptimizerGain.Value / 100.f;
+
+		if (flYawStep > 0.f)
+		{
+			const float flVelYaw = Math::Rad2Deg(atan2f(vVelocity.y, vVelocity.x));
+			const bool  bBackward = fabsf(remainderf(pCmd->viewangles.y - flVelYaw, 360.f)) > 90.f;
+			const float flAxisYaw = bBackward ? remainderf(flVelYaw + 180.f, 360.f) : flVelYaw;
+
+			if ((flPrevYaw - pCmd->viewangles.y < 0.f) && (bBackward ? pCmd->sidemove > 0.f : pCmd->sidemove < 0.f))
+			{
+				float flStrafe = remainderf(pCmd->viewangles.y - flAxisYaw, 360.f) * flGain;
+				if (flStrafe < -flYawStep)
+				{
+					if (flStrafe < -180.f) flStrafe = -180.f;
+					pCmd->viewangles.y = remainderf(pCmd->viewangles.y - flYawStep * roundf(flStrafe / flYawStep), 360.f);
+					pCmd->mousedx = short(flSens * ceilf(remainderf(flPrevYaw - pCmd->viewangles.y, 360.f) / sqrtf(flYawStep)));
+					I::EngineClient->SetViewAngles(pCmd->viewangles);
+				}
+			}
+			else if ((flPrevYaw - pCmd->viewangles.y > 0.f) && (bBackward ? pCmd->sidemove < 0.f : pCmd->sidemove > 0.f))
+			{
+				float flStrafe = remainderf(pCmd->viewangles.y - flAxisYaw, 360.f) * flGain;
+				if (flStrafe > flYawStep)
+				{
+					if (flStrafe > 180.f) flStrafe = 180.f;
+					pCmd->viewangles.y = remainderf(pCmd->viewangles.y - flYawStep * roundf(flStrafe / flYawStep), 360.f);
+					pCmd->mousedx = short(flSens * ceilf(remainderf(flPrevYaw - pCmd->viewangles.y, 360.f) / sqrtf(flYawStep)));
+					I::EngineClient->SetViewAngles(pCmd->viewangles);
+				}
+			}
+		}
+	}
+
+	flPrevYaw = pCmd->viewangles.y;
+}

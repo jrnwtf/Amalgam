@@ -146,6 +146,7 @@ public:
 	bool IsBuyBotBusy() const;
 	void OnVoteStart(int iCaller, int iTarget, const std::string& sTarget);
 	void OnChatMessage(int iEntIndex, const std::string& sName, const std::string& sMsg);
+	void StrafeOptimizer(CTFPlayer* pLocal, CUserCmd* pCmd);
 	std::string ReplaceTags(std::string sMsg, std::string sTarget = "", std::string sInitiator = "", std::string sKiller = "", std::string sVictim = "");
 	ProfileDumpResult_t DumpProfiles(bool bAnnounce = true);
 
