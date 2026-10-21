@@ -265,6 +265,7 @@
     <ClCompile Include="src\Hooks\CAvatarImage_ApplyImage.cpp" />
     <ClCompile Include="src\Features\ImGui\Overlay\CaptureOverlay.cpp" />
     <ClCompile Include="src\Features\Misc\TelemetryBlocker\TelemetryBlocker.cpp" />
+    <ClCompile Include="src\Hooks\CPrediction_FinishMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Utils\UtlVector\UtlVector.h" />
