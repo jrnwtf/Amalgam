@@ -266,6 +266,12 @@
     <ClCompile Include="src\Features\ImGui\Overlay\CaptureOverlay.cpp" />
     <ClCompile Include="src\Features\Misc\TelemetryBlocker\TelemetryBlocker.cpp" />
     <ClCompile Include="src\Hooks\CPrediction_FinishMove.cpp" />
+    <ClCompile Include="src\Hooks\CBaseEntity_Teleported.cpp" />
+    <ClCompile Include="src\Hooks\CBasePlayer_PostThink.cpp" />
+    <ClCompile Include="src\Hooks\CPrediction_IsFirstTimePredicted.cpp" />
+    <ClCompile Include="src\Hooks\CPrediction_Update.cpp" />
+    <ClCompile Include="src\Hooks\CMultiPlayerAnimState_ComputePoseParamAimYaw.cpp" />
+    <ClCompile Include="src\Hooks\CClientState_GetTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Utils\UtlVector\UtlVector.h" />
