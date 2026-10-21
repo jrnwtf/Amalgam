@@ -70,3 +70,12 @@ public:
 };
 
 ADD_FEATURE(CEnginePrediction, EnginePrediction);
+
+struct EnginePredictionBatch_t
+{
+	EnginePredictionBatch_t() { F::EnginePrediction.BeginBatch(); }
+	~EnginePredictionBatch_t() { F::EnginePrediction.EndBatch(); }
+
+	EnginePredictionBatch_t(const EnginePredictionBatch_t&) = delete;
+	EnginePredictionBatch_t& operator=(const EnginePredictionBatch_t&) = delete;
+};
