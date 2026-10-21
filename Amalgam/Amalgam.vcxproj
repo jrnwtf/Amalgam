@@ -1203,11 +1203,17 @@
     <ClCompile Include="src\Hooks\CAchievementMgr_CheckAchievementsEnabled.cpp" />
     <ClCompile Include="src\Hooks\CAttributeManager_AttribHookValue.cpp" />
     <ClCompile Include="src\Hooks\CBaseAnimating_Interpolate.cpp" />
+    <ClCompile Include="src\Hooks\CBaseEntity_Teleported.cpp" />
+    <ClCompile Include="src\Hooks\CBasePlayer_PostThink.cpp" />
     <ClCompile Include="src\Hooks\CClientShadowMgr_PreRender.cpp" />
     <ClCompile Include="src\Hooks\CBaseAnimating_MaintainSequenceTransitions.cpp" />
     <ClCompile Include="src\Hooks\CBaseAnimating_SetSequence.cpp" />
     <ClCompile Include="src\Hooks\CBaseAnimating_SetupBones.cpp" />
+    <ClCompile Include="src\Hooks\CClientState_GetTime.cpp" />
+    <ClCompile Include="src\Hooks\CMultiPlayerAnimState_ComputePoseParamAimYaw.cpp" />
     <ClCompile Include="src\Hooks\CPrediction_FinishMove.cpp" />
+    <ClCompile Include="src\Hooks\CPrediction_IsFirstTimePredicted.cpp" />
+    <ClCompile Include="src\Hooks\CPrediction_Update.cpp" />
     <ClCompile Include="src\Hooks\CTFGrapplingHook_ItemPostFrame.cpp" />
     <ClCompile Include="src\Hooks\CTFPlayer_UpdateClientSideAnimation.cpp" />
     <ClCompile Include="src\Hooks\CBaseEntity_EstimateAbsVelocity.cpp" />
