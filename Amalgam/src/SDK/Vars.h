@@ -194,6 +194,8 @@ NAMESPACE_BEGIN(Vars)
 		CVar(ConditionsDisplay, "Conditions display", DragBox_t(), VISUAL | NOBIND);
 		CVar(SeedPredictionDisplay, "Seed prediction display", DragBox_t(), VISUAL | NOBIND);
 		CVar(NavBotDisplay, "Navbot display", DragBox_t(), VISUAL | NOBIND);
+		CVar(RecorderDisplay, "Recorder display", DragBox_t(), VISUAL | NOBIND);
+		CVar(CheckpointsDisplay, "Checkpoints display", DragBox_t(), VISUAL | NOBIND);
 
 		CVar(Scale, "Scale", 1.f, NOBIND | SLIDER_MIN | SLIDER_PRECISION | SLIDER_NOAUTOUPDATE, 0.75f, 2.f, 0.25f);
 		CVar(CheapText, "Cheap text", false, NOBIND);
@@ -220,6 +222,7 @@ NAMESPACE_BEGIN(Vars)
 		CVar(FOVCircle, "FOV circle color", Color_t(255, 255, 255, 100), VISUAL);
 		CVar(NoSpread, "Nospread color", Color_t(75, 175, 255, 255), VISUAL);
 		CVar(SpellFootstep, "Spell footstep color", Color_t(255, 255, 255, 255), VISUAL);
+		CVar(EdgeBugCircle, "Edge bug circle color", Color_t(255, 255, 255, 255), VISUAL);
 
 		CVar(WorldModulation, VA_LIST("World modulation", "World modulation color"), Color_t(255, 255, 255, 255), VISUAL);
 		CVar(SkyModulation, VA_LIST("Sky modulation", "Sky modulation color"), Color_t(255, 255, 255, 255), VISUAL);
@@ -960,6 +963,88 @@ NAMESPACE_BEGIN(Vars)
 			CVar(AutoEdgebugStrafeMaxDelta, "Max delta", 180, NOSAVE | DEBUGVAR | SLIDER_CLAMP, 1, 360);
 			CVar(AutoEdgebugTryNegativeDir, "Try negative dir", true, NOSAVE | DEBUGVAR);
 			CVar(AutoEdgebugTryRandomMove, "Try random move", true, NOSAVE | DEBUGVAR);
+
+			CVar(StrafeOptimizer, "Strafe optimizer", false);
+			CVar(StrafeOptimizerGain, "Optimizer gain", 50.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 100.f, 5.f);
+			CVar(StrafeOptimizerMinSpeed, "Optimizer min speed", 100.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 500.f, 10.f);
+
+			CVar(LongJump, "Long jump", false);
+			CVar(MiniJump, "Mini jump", false);
+			CVar(MiniJumpHoldDuck, "Mini jump hold duck", true);
+			CVar(MiniJumpQueue, "Mini jump queue", true);
+
+			CVar(AutoAlign, "Auto align", false);
+
+			CVar(PixelSurf, "Pixel surf", false);
+
+			CVar(TextureBug, "Texture bug", false);
+			CVar(TextureBugAutoCrouch, "TB auto crouch", true);
+			CVar(TextureBugEdgeStop, "TB edge stop", true);
+			CVar(TextureBugHoldTicks, "TB hold ticks", 4, SLIDER_MIN, 0, 16);
+			CVar(TextureBugCatchEps, "TB catch eps", 2.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.1f, 8.f, 0.1f);
+			CVar(TextureBugReach, "TB reach", 2.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 16.f, 0.5f);
+			CVar(TextureBugScanStep, "TB scan step", 1.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.5f, 4.f, 0.25f);
+			CVar(TextureBugChokeTick, "TB choke tick", false);
+			CVar(TextureBugChokeTicks, "TB choke ticks", 6, SLIDER_MIN, 1, 14);
+
+			CVar(HeadSurf, "Head surf", false);
+
+			CVar(WallClimb, "Wall climb", false);
+
+			CVar(AirStuck, "Air stuck", false);
+			CVar(AirStuckCatchEps, "AS catch eps", 2.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.1f, 8.f, 0.1f);
+			CVar(AirStuckReach, "AS reach", 24.f, SLIDER_CLAMP | SLIDER_PRECISION, 4.f, 64.f, 2.f);
+			CVar(AirStuckFlushTol, "AS flush tol", 0.1f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 2.f, 0.05f);
+			CVar(AirStuckDriftGain, "AS drift gain", 18.f, SLIDER_CLAMP | SLIDER_PRECISION, 1.f, 80.f, 1.f);
+			CVar(AirStuckSimBudget, "AS sim budget", 64, SLIDER_MIN, 4, 128);
+
+			CVar(PixelFinder, "Pixel finder", false);
+			CVar(PixelFinderScanMargin, "PF scan margin", 4.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 32.f, 1.f);
+
+			CVar(PixelSurfLine, "Pixel surf line", false, VISUAL);
+			CVar(PixelSurfLineColor, "Surf line color", Color_t(255, 200, 50, 200), VISUAL);
+
+			CVar(PixelSurfAssist, "Pixel surf assist", false);
+			CVar(PixelSurfAssistRadius, "PS assist radius", 300.f, SLIDER_CLAMP | SLIDER_PRECISION, 50.f, 1500.f, 25.f);
+			CVar(PixelSurfAssistSnapDist, "PS snap dist", 32.f, SLIDER_CLAMP | SLIDER_PRECISION, 4.f, 128.f, 4.f);
+			CVar(PixelSurfAssistRender, "PS assist render", true, VISUAL);
+			CVar(PixelSurfAssistSteer, "PS assist steer", true);
+			CVar(PixelSurfAssistJumpBox, "PS jump box", true, VISUAL);
+			CVar(PixelSurfAssistSetPoint, "PS set point", false, NOBIND);
+			CVar(PixelSurfAssistDeletePoint, "PS delete point", false, NOBIND);
+
+			CVar(MovementRecorder, "Movement recorder", false);
+			CVar(MovementRecorderRecord, "MR record", false, NOBIND);
+			CVar(MovementRecorderPlay, "MR play", false, NOBIND);
+			CVar(MovementRecorderStop, "MR stop", false, NOBIND);
+			CVar(MovementRecorderSave, "MR save", false, NOBIND);
+			CVar(MovementRecorderLoad, "MR load", false, NOBIND);
+			CVar(MovementRecorderClear, "MR clear", false, NOBIND);
+			CVar(MovementRecorderHud, "MR HUD", true, VISUAL);
+			CVar(MovementRecorderShowPath, "MR show path", true, VISUAL);
+			CVar(MovementRecorderShowRoutes, "MR show routes", true, VISUAL);
+			CVar(MovementRecorderMoveToStart, "MR move to start", true);
+			CVar(MovementRecorderMoveToStartDist, "MR start dist", 4.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.5f, 32.f, 0.5f);
+			CVar(MovementRecorderStartSpeed, "MR start speed", 16.f, SLIDER_CLAMP | SLIDER_PRECISION, 1.f, 80.f, 1.f);
+			CVar(MovementRecorderStartTolerance, "MR start tol", 8.f, SLIDER_CLAMP | SLIDER_PRECISION, 1.f, 64.f, 1.f);
+			CVar(MovementRecorderDriftCorrect, "MR drift correct", true);
+			CVar(MovementRecorderDriftStrength, "MR drift strength", 0.5f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 1.f, 0.05f);
+			CVar(MovementRecorderVerbatim, "MR verbatim", false);
+			CVar(MovementRecorderLockView, "MR lock view", true);
+			CVar(MovementRecorderRouteColor, "MR route color", Color_t(255, 200, 50, 180), VISUAL);
+			CVar(MovementRecorderRoutePoints, "MR route points", 8, SLIDER_MIN, 3, 64);
+			CVar(MovementRecorderRouteRadius, "MR route radius", 6.f, SLIDER_CLAMP | SLIDER_PRECISION, 1.f, 24.f, 1.f);
+			CVar(MovementRecorderRouteSolid, "MR route solid", false, VISUAL);
+			CVar(MovementRecorderShadowPlay, "MR shadow play", false);
+			CVar(MovementRecorderShadowSave, "MR shadow save", false, NOBIND);
+			CVar(MovementRecorderShadowSeconds, "MR shadow secs", 15.f, SLIDER_CLAMP | SLIDER_PRECISION, 5.f, 60.f, 5.f);
+
+			CVar(Checkpoints, "Checkpoints", false);
+			CVar(CheckpointSaveKey, "CP save key", 0, NOBIND);
+			CVar(CheckpointTeleportKey, "CP teleport key", 0, NOBIND);
+			CVar(CheckpointNoclipKey, "CP noclip key", 0, NOBIND);
+
+			CVar(JumpStats, "Jump stats", false, VISUAL);
 		NAMESPACE_END(Movement)
 
 		NAMESPACE_BEGIN(Automation)
