@@ -1910,6 +1910,14 @@ void CMenu::MenuMisc(int iTab)
 					}
 					PopTransparent();
 
+					FToggle(Vars::Misc::Movement::StrafeOptimizer, FToggleEnum::Left);
+					PushTransparent(!Vars::Misc::Movement::StrafeOptimizer.Value);
+					{
+						FSlider(Vars::Misc::Movement::StrafeOptimizerGain, FSliderEnum::Right);
+						FSlider(Vars::Misc::Movement::StrafeOptimizerMinSpeed, FSliderEnum::Left);
+					}
+					PopTransparent();
+
 					FDropdown(Vars::Misc::Movement::AutoEdgebug, FDropdownEnum::None, -10);
 					FColorPicker(Vars::Colors::EdgebugPath, FColorPickerEnum::SameLine, {}, { H::Draw.Scale(10), H::Draw.Scale(40) });
 					FToggle(Vars::Misc::Movement::Bunnyhop, FToggleEnum::Left);
