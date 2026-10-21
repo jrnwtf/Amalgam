@@ -3,6 +3,14 @@
 #include "../../SDK.h"
 #include "../../Definitions/Interfaces.h"
 #include "../../../Utils/Math/Math.h"
+
+#ifndef PI
+static constexpr float PI = 3.14159265358979323846f;
+#endif
+#ifndef DEG2RAD
+#define DEG2RAD(x) ((x) * (PI / 180.f))
+#endif
+
 #include "../../../Utils/Timer/Timer.h"
 #include "../../../Features/ImGui/Render.h"
 
