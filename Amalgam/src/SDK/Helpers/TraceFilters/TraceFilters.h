@@ -118,3 +118,13 @@ public:
 	int m_iPlayer = PLAYER_NONE;
 	int m_iObject = OBJECT_NONE;
 };
+
+class CTraceFilterWorldAndBrushOnly : public ITraceFilter
+{
+public:
+	bool ShouldHitEntity(IHandleEntity* pServerEntity, int nContentsMask) override;
+	TraceType_t GetTraceType() const override;
+	CBaseEntity* pSkip = nullptr;
+
+	int iTeam = -1;
+};
