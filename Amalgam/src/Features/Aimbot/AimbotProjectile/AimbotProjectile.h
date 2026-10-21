@@ -62,12 +62,14 @@ struct Setup_t
 {
 	Vec3 m_vPoint = {};
 	uint8_t m_iType = PointTypeEnum::Geometry;
+	bool m_bEdge = false;
 };
 struct Point_t
 {
 	Vec3 m_vPoint = {};
 	Solution_t m_tSolution = {};
 	uint8_t m_iType = PointTypeEnum::Direct;
+	bool m_bEdge = false;
 };
 
 struct Offset_t
@@ -118,6 +120,7 @@ private:
 	Directs_t GetDirects();
 	Splashes_t GetSplashes();
 	void SetupSplashPoints(Vec3& vOrigin, std::vector<Setup_t>& vSplashPoints, uint8_t iFlags = CalculateFlagsEnum::None);
+	bool DetectEdgeSplash(Vec3 vOrigin);
 	std::vector<Point_t> GetSplashPoints(Vec3 vOrigin, std::vector<Setup_t>& vSplashPoints, int iSimTime, uint8_t iFlags = CalculateFlagsEnum::Accuracy, bool bFirst = false);
 
 	void CalculateAngle(const Vec3& vLocalPos, const Vec3& vTargetPos, int iSimTime, Solution_t& tOut, uint8_t iFlags = CalculateFlagsEnum::Accuracy, int iTolerance = -1);
@@ -144,6 +147,7 @@ private:
 	MoveStorage m_tMoveStorage = {};
 	ProjectileInfo m_tProjInfo = {};
 	std::vector<Setup_t> m_vSplashPoints = {};
+	bool m_bEdgePoints = false;
 
 	bool m_bLastTickHeld = false;
 

@@ -364,6 +364,9 @@ CVarEnum(SplashPrediction, "Splash prediction", 2, NONE, nullptr,
 CVarEnum(SplashMode, "Splash mode", 1, NONE, nullptr,
 	VA_LIST("Trace", "Face"),
 	Trace, Face);
+CVarEnum(EdgeSplash, "Edge splash", 0, NONE, nullptr,
+	VA_LIST("Off", "Prefer", "Force"),
+	Off, Prefer, Force);
 CVarEnum(AutoDetonate, "Auto detonate", 0b00, DROPDOWN_MULTI, "Off",
 	VA_LIST("Stickies", "Flares", "##Divider", "Damage priority", "Prevent self damage", "Ignore invisible", "Aim at stickies"),
 	Stickies = 1 << 0, Flares = 1 << 1, MaxDamage = 1 << 2, PreventSelfDamage = 1 << 3, IgnoreInvisible = 1 << 4, AimAtStickies = 1 << 5);

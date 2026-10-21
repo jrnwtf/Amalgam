@@ -786,6 +786,21 @@ void CAimbotProjectile::SetupSplashPoints(Vec3& vOrigin, std::vector<Setup_t>& v
 #endif
 }
 
+bool CAimbotProjectile::DetectEdgeSplash(Vec3 vOrigin)
+{
+	m_bEdgePoints = false;
+	if (Vars::Aimbot::Projectile::EdgeSplash.Value == Vars::Aimbot::Projectile::EdgeSplashEnum::Off || !m_tInfo.m_flRadius)
+		return false;
+
+	SetupSplashPoints(vOrigin, m_vSplashPoints);
+	for (auto& tSetup : m_vSplashPoints)
+	{
+		if (tSetup.m_bEdge)
+			return m_bEdgePoints = true;
+	}
+	return false;
+}
+
 std::vector<Point_t> CAimbotProjectile::GetSplashPoints(Vec3 vOrigin, std::vector<Setup_t>& vSplashPoints, int iSimTime, uint8_t iFlags, bool bFirst)
 {
 	std::vector<Point_t> vPoints = {};
@@ -812,6 +827,7 @@ std::vector<Point_t> CAimbotProjectile::GetSplashPoints(Vec3 vOrigin, std::vecto
 	for (auto it = vSplashPoints.begin(); it != vSplashPoints.end();)
 	{
 		Point_t tPoint = { it->m_vPoint, {}, it->m_iType };
+		tPoint.m_bEdge = it->m_bEdge;
 
 		CalculateAngle(m_tInfo.m_vLocalEye, tPoint.m_vPoint, iSimTime, tPoint.m_tSolution, iFlags, iTolerance);
 		if (tPoint.m_tSolution.m_iCalculated != CalculateResultEnum::Good)
@@ -838,8 +854,13 @@ std::vector<Point_t> CAimbotProjectile::GetSplashPoints(Vec3 vOrigin, std::vecto
 
 	if (bSort)
 	{
+		bool bEdgeSplash = Vars::Aimbot::Projectile::EdgeSplash.Value != Vars::Aimbot::Projectile::EdgeSplashEnum::Off;
+
 		std::sort(vPoints.begin(), vPoints.end(), [&](const auto& a, const auto& b) -> bool
 			{
+				if (bEdgeSplash && a.m_bEdge != b.m_bEdge)
+					return a.m_bEdge;
+
 				return a.m_vPoint.DistToSqr(vOrigin) < b.m_vPoint.DistToSqr(vOrigin);
 			});
 		vPoints.resize(std::min(iLimit, int(vPoints.size())));
@@ -1645,7 +1666,9 @@ bool CAimbotProjectile::HandleSplash(SplashHistory_t& mSplashHistory)
 	if (!m_vSplashPoints.empty())
 	{
 		iFlags |= CalculateFlagsEnum::Accuracy;
+		bool bEdgeSplash = Vars::Aimbot::Projectile::EdgeSplash.Value != Vars::Aimbot::Projectile::EdgeSplashEnum::Off;
 		float flLowestDistance = std::numeric_limits<float>::max(); bool bFirst = true;
+		bool bHaveBest = false, bBestEdge = false;
 		for (auto& tHistory : vSplashHistory)
 		{
 			std::vector<Point_t> vSplashPoints = {};
@@ -1654,13 +1677,21 @@ bool CAimbotProjectile::HandleSplash(SplashHistory_t& mSplashHistory)
 			for (auto& tPoint : vSplashPoints)
 			{
 				float flDistance = tHistory.m_vOrigin.DistToSqr(tPoint.m_vPoint);
-				if (flDistance > flLowestDistance)
-					continue;
+				//if (flDistance > flLowestDistance)
+				//	continue;
+				if (bHaveBest)
+				{	
+					bool bBetter = bEdgeSplash && tPoint.m_bEdge != bBestEdge ? tPoint.m_bEdge : flDistance <= flLowestDistance;
+					if (!bBetter)
+						continue;
+				}
 
 				if (HandlePoint(tHistory.m_vOrigin, tHistory.m_iSimtime, tPoint.m_tSolution.m_flPitch, tPoint.m_tSolution.m_flYaw, tPoint.m_tSolution.m_flTime, tPoint.m_vPoint, tPoint.m_iType, iType))
 				{
 					bReturn = true;
 					flLowestDistance = flDistance;
+					bBestEdge = tPoint.m_bEdge;
+					bHaveBest = true;
 				}
 			}
 			if (m_tInfo.m_bIgnoreTiming && iType == PointFlagsEnum::Lob)
@@ -1736,6 +1767,8 @@ int CAimbotProjectile::CanHit(Target_t& tTarget, CTFPlayer* pLocal, CTFWeaponBas
 		m_tInfo.m_flNormalOffset = 1.f;
 	}
 	m_tInfo.m_bIgnoreTiming = Vars::Aimbot::Projectile::LobAnglesUnderpredict.Value && m_tInfo.m_flRadius;
+
+	DetectEdgeSplash(tTarget.m_vPos);
 
 	Directs_t mDirects = GetDirects();
 	Splashes_t vSplashes = GetSplashes();
@@ -1844,7 +1877,10 @@ int CAimbotProjectile::CanHit(Target_t& tTarget, CTFPlayer* pLocal, CTFWeaponBas
 	}
 
 	m_iResult = false, m_bUpdate = bUpdate;
-	if (!m_tInfo.m_flRadius || Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer)
+	//if (!m_tInfo.m_flRadius || Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer)
+	const bool bEdgeSplash = m_bEdgePoints && !mSplashHistory.empty()
+	&& Vars::Aimbot::Projectile::EdgeSplash.Value > Vars::Aimbot::Projectile::EdgeSplashEnum::Off;
+	if (!m_tInfo.m_flRadius || (Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer && !bEdgeSplash))
 		goto direct;
 	else
 		goto splash;
@@ -2930,6 +2966,8 @@ bool CAimbotProjectile::CanHit(Target_t& tTarget, CTFPlayer* pLocal, CTFWeaponBa
 	m_tInfo.m_flRadiusTime = m_tInfo.m_flBoundsTime + m_tInfo.m_flRadius / m_tInfo.m_flVelocity;
 	m_tInfo.m_bIgnoreTiming = Vars::Aimbot::Projectile::LobAnglesUnderpredict.Value && m_tInfo.m_flRadius;
 
+	DetectEdgeSplash(tTarget.m_vPos);
+
 	Directs_t mDirects = GetDirects();
 	Splashes_t vSplashes = GetSplashes();
 
@@ -3027,7 +3065,10 @@ bool CAimbotProjectile::CanHit(Target_t& tTarget, CTFPlayer* pLocal, CTFWeaponBa
 	}
 
 	m_iResult = false, m_bUpdate = true;
-	if (!m_tInfo.m_flRadius || Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer)
+	//if (!m_tInfo.m_flRadius || Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer)
+	const bool bEdgeSplash = m_bEdgePoints && !mSplashHistory.empty()
+	&& Vars::Aimbot::Projectile::EdgeSplash.Value > Vars::Aimbot::Projectile::EdgeSplashEnum::Off;
+	if (!m_tInfo.m_flRadius || (Vars::Aimbot::Projectile::SplashPrediction.Value < Vars::Aimbot::Projectile::SplashPredictionEnum::Prefer && !bEdgeSplash))
 		goto direct;
 	else
 		goto splash;

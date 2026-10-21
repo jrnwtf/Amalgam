@@ -635,6 +635,7 @@ void CMenu::MenuAimbot(int iTab)
 				{
 					FDropdown(Vars::Aimbot::Projectile::StrafePrediction, FDropdownEnum::Left);
 					FDropdown(Vars::Aimbot::Projectile::SplashPrediction, FDropdownEnum::Right);
+					FDropdown(Vars::Aimbot::Projectile::EdgeSplash, FDropdownEnum::Left);
 					FDropdown(Vars::Aimbot::Projectile::Hitboxes, FDropdownEnum::Left);
 					FDropdown(Vars::Aimbot::Projectile::SplashMode, FDropdownEnum::Right);
 					FDropdown(Vars::Aimbot::Projectile::Modifiers);
