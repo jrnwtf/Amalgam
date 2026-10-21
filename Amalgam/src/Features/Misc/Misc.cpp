@@ -18,6 +18,23 @@
 #include "NamedPipe/NamedPipe.h"
 #endif
 
+#include <format>
+#include <fstream>
+#include <filesystem>
+#include <sstream>
+
+#include "../EnginePrediction/EnginePrediction.h"
+
+#ifndef PI
+static constexpr float PI = 3.14159265358979323846f;
+#endif
+#ifndef DEG2RAD
+#define DEG2RAD(x) ((x) * (PI / 180.f))
+#endif
+#ifndef RAD2DEG
+#define RAD2DEG(x) ((x) * (180.f / PI))
+#endif
+
 MAKE_SIGNATURE(Voice_IsRecording, "engine.dll", "80 3D ? ? ? ? ? 74 ? 80 3D ? ? ? ? ? 75", 0x0);
 MAKE_SIGNATURE(ReportPlayerAccount, "client.dll", "48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 8B FA 48 C1 E9", 0x0);
 
@@ -3357,7 +3374,7 @@ void CMisc::StrafeOptimizer(CTFPlayer* pLocal, CUserCmd* pCmd)
 
 		if (flYawStep > 0.f)
 		{
-			const float flVelYaw = Math::Rad2Deg(atan2f(vVelocity.y, vVelocity.x));
+			const float flVelYaw = RAD2DEG(atan2f(vVelocity.y, vVelocity.x));
 			const bool  bBackward = fabsf(remainderf(pCmd->viewangles.y - flVelYaw, 360.f)) > 90.f;
 			const float flAxisYaw = bBackward ? remainderf(flVelYaw + 180.f, 360.f) : flVelYaw;
 
