@@ -245,6 +245,7 @@ public:
 	float GetRange();
 	const wchar_t* GetWeaponName();
 	CHudTexture* GetWeaponIcon();
+	int GetSwingRange();
 };
 
 class CTFKnife : public CTFWeaponBase
