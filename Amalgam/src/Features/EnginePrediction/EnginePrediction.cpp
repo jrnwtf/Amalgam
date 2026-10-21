@@ -127,3 +127,15 @@ void CEnginePrediction::Unload()
 		m_tLocal = {};
 	}
 }
+
+float CEnginePrediction::GetTargetPredictZVelocity() const
+{
+	static auto sv_gravity = H::ConVars.FindVar("sv_gravity");
+	const float flGravity = sv_gravity ? sv_gravity->GetFloat() : 800.f;
+	return -(flGravity * I::GlobalVars->interval_per_tick * 0.5f);
+}
+
+bool CEnginePrediction::IsTargetPredictZVelocity(float flVz, float flEpsilon) const
+{
+	return fabsf(flVz - GetTargetPredictZVelocity()) <= flEpsilon;
+}
